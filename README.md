@@ -31,8 +31,8 @@ The USB backend uses FunctionFS because some tablet kernels expose `f_hid` but i
 ## Windows and Steam
 
 1. Press Win+R, run `joy.cpl`, select the controller and open Properties. Check button presses, stick travel, POV/D-pad and both triggers, including simultaneous touches.
-2. In Steam Settings → Controller, enable Steam Input for generic controllers (wording varies by Steam version). Define or calibrate the layout if prompted. ABXY map to HID buttons 1–4; LB/RB to 5–6; Select/Start/Home to 7–9; L3/R3 to 10–11; LT/RT to 12–13.
-3. Enable Steam Input in the individual game's controller properties when necessary. Games that require XInput outside Steam may need a separate mapper; this project supplies no Windows driver or mapper.
+2. In the tested setup, Steam Settings → Controller detected the tablet as “Min Tablet HID Gamepad”. Check whether it appears on your system. For a newly detected controller, choose **Start Setup** and **Define Layout**, then follow the prompts for ABXY, D-pad, stick directions and clicks, LB/RB, LT/RT, Select, Start and Home. Share is optional. Save the layout. Repeat only if USB appears as a separate controller identity; USB Steam mapping has not been verified here.
+3. For a specific game, open **Properties → Controller**, enable Steam Input, select an appropriate **Gamepad** layout, and restart the game. This setting is separate from the controller’s Define Layout step. Ori gameplay has not been validated; see [hardware acceptance](docs/HARDWARE_ACCEPTANCE.md). Games that require XInput outside Steam may need a separate mapper; this project supplies no Windows driver or mapper.
 
 LT/RT send independent digital buttons 12/13; no trigger axes or pressure are advertised. The D-pad uses an eight-way HID hat. Pointer cancellation, connection transitions, app backgrounding and Stop release controls. USB helper EOF also sends neutral and restores the original gadget. After an abrupt power loss or root failure, recovery may require relaunch or reboot.
 

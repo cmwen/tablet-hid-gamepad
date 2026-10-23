@@ -30,20 +30,3 @@ updates:
       github-actions:
         patterns:
           - "*"
-  
-  # Astro documentation website
-  - package-ecosystem: "npm"
-    directory: "/astro"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
-    groups:
-      astro-dependencies:
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "@astrojs/*"
-      astro-core:
-        patterns:
-          - "@astrojs/*"

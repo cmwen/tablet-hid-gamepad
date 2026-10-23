@@ -1,7 +1,7 @@
 name: tablet_hid_gamepad
 description: "Turn an Android tablet into a USB or Bluetooth HID gamepad for Steam."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+2
 
 environment:
   sdk: ^3.10.7

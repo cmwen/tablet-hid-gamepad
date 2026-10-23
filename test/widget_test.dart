@@ -7,10 +7,10 @@ import 'package:tablet_hid_gamepad/gamepad.dart';
 
 void main() {
   test(
-    'neutral, simultaneous buttons, signed axes and independent triggers',
+    'neutral, simultaneous buttons, unsigned centered axes and independent triggers',
     () {
       final pad = GamepadState();
-      expect(pad.report(), [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      expect(pad.report(), [0, 0, 8, 0, 128, 0, 128, 0, 128, 0, 128]);
       pad.button(0, true);
       pad.button(10, true);
       pad.dpad(3);
@@ -19,14 +19,24 @@ void main() {
       pad.trigger(false, true);
       final report = pad.report();
       final values = ByteData.sublistView(report);
-      expect(values.getUint16(0, Endian.little), 1025);
+      expect(values.getUint16(0, Endian.little), 5121);
       expect(report[2], 3);
-      expect(values.getInt16(3, Endian.little), -32767);
-      expect(values.getInt16(5, Endian.little), 32767);
-      expect(report[11], 0);
-      expect(report[12], 255);
+      expect(values.getUint16(3, Endian.little), 0);
+      expect(values.getUint16(5, Endian.little), 65535);
+      expect(values.getUint16(0, Endian.little) & 2048, 0);
+      expect(values.getUint16(0, Endian.little) & 4096, 4096);
+      pad.trigger(true, true);
+      expect(
+        ByteData.sublistView(pad.report()).getUint16(0, Endian.little) & 6144,
+        6144,
+      );
+      pad.trigger(false, false);
+      expect(
+        ByteData.sublistView(pad.report()).getUint16(0, Endian.little) & 6144,
+        2048,
+      );
       pad.reset();
-      expect(pad.report(), [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      expect(pad.report(), [0, 0, 8, 0, 128, 0, 128, 0, 128, 0, 128]);
     },
   );
   test('D-pad combines diagonals and releases individual fingers', () {
@@ -86,7 +96,7 @@ void main() {
       expect(reports.last.sublist(3, 5), isNot([0, 0]));
       await stick.cancel();
       await tester.pump();
-      expect(reports.last.sublist(3, 11), everyElement(0));
+      expect(reports.last.sublist(3, 11), [0, 128, 0, 128, 0, 128, 0, 128]);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     },

@@ -83,6 +83,10 @@ runner temporary directory, and creates an escaped `android/key.properties` for
 Gradle. The workflows remove those files in an `always()` cleanup step. Only APK
 and AAB files are published. No credential download or persistence step is needed.
 
+## Migrating from the 0.1.0 development preview
+
+The official 0.2.0 APK uses a dedicated production key. A debug-signed preview has a different certificate, so Android correctly rejects an in-place update. Stop and restore rooted USB, stop Bluetooth, then uninstall the preview manually before installing the release. App preferences and app-scoped root permissions may be removed. No automated release or install script uninstalls an existing application. Future production releases must use the same key.
+
 ## Troubleshooting
 
 - **Missing signing configuration:** check that every property or secret listed

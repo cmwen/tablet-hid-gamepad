@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-/// Shared input-only HID report. All axes center at zero; hat 8 means released.
+/// Shared input-only HID report. Stick axes center at 32768; hat 8 means released.
 class GamepadState extends ChangeNotifier {
   final Set<int> buttons = {};
   int hat = 8;
   final Set<int> directions = {};
   double lx = 0, ly = 0, rx = 0, ry = 0;
-  int leftTrigger = 0, rightTrigger = 0;
   void button(int index, bool down) {
     if (down) {
       buttons.add(index);
@@ -57,12 +56,7 @@ class GamepadState extends ChangeNotifier {
   }
 
   void trigger(bool left, bool down) {
-    if (left) {
-      leftTrigger = down ? 255 : 0;
-    } else {
-      rightTrigger = down ? 255 : 0;
-    }
-    notifyListeners();
+    button(left ? 11 : 12, down);
   }
 
   void reset() {
@@ -70,12 +64,11 @@ class GamepadState extends ChangeNotifier {
     directions.clear();
     hat = 8;
     lx = ly = rx = ry = 0;
-    leftTrigger = rightTrigger = 0;
     notifyListeners();
   }
 
   Uint8List report() {
-    final data = ByteData(13);
+    final data = ByteData(11);
     int mask = 0;
     for (final button in buttons) {
       mask |= 1 << button;
@@ -84,14 +77,12 @@ class GamepadState extends ChangeNotifier {
     data.setUint8(2, hat);
     final axes = [lx, ly, rx, ry];
     for (int i = 0; i < 4; i++) {
-      data.setInt16(
+      data.setUint16(
         3 + i * 2,
-        (axes[i].clamp(-1, 1) * 32767).round(),
+        ((axes[i].clamp(-1, 1) + 1) * 32767.5).round(),
         Endian.little,
       );
     }
-    data.setUint8(11, leftTrigger);
-    data.setUint8(12, rightTrigger);
     return data.buffer.asUint8List();
   }
 }

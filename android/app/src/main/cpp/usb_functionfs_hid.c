@@ -514,8 +514,11 @@ Java_com_cmwen_tablet_1hid_1gamepad_UsbFunctionFs_start(JNIEnv *env, jobject own
     s->report_id = (uint8_t)report_id_arg;
     s->report_size = (size_t)report_size_arg;
     s->last_report[0] = s->report_id;
-    /* Gamepad neutral: hat null state, never north on enumeration. */
+    /* Report ID + buttons + null hat + four unsigned centered stick axes.
+     * GET_REPORT may arrive before the first interrupt input packet. */
     s->last_report[3] = 8;
+    s->last_report[5] = s->last_report[7] = 0x80;
+    s->last_report[9] = s->last_report[11] = 0x80;
     s->ep0 = s->ep_in = s->ep_out = s->stop_fd = -1;
     s->state_fd = -1;
     atomic_init(&s->stopping, false);

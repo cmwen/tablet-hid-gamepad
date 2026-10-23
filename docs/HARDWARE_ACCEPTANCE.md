@@ -1,4 +1,26 @@
-# Hardware acceptance — 0.1.0 preview
+# Hardware acceptance — 0.2.0
+
+Validation date: 2026-10-23. The production-signed 0.2.0 APK was installed and tested on the same rooted Lenovo Android 10 tablet and Windows host as the earlier preview. Hardware and game compatibility remain specific to the tested setup.
+
+| Check | Observed 0.2.0 result |
+| --- | --- |
+| Rooted USB / ADB | Activated and restored to original configuration; ADB returned |
+| Windows report capabilities | Gamepad collection; report ID 1; 12 bytes including ID; 16 button bits; null-capable hat; four unsigned 16-bit axes X/Y/Z/Rz, 0…65535 |
+| Live Windows USB input | 556 actual reports from the signed APK; initial raw report neutral before touch; right-stick Z/R movement and LT/RT masks 2048/4096 verified. The preceding debug test verified travel on all four stick axes |
+| Final raw HID neutral | Buttons 0; hat 8; all four sticks 32768 |
+| Continuous Windows legacy polling | Capabilities report four axes (flags 0x33). Supported X/Y/Z/R axes centered at 32767 initially, during delayed idle and after release; POV 65535 and buttons 0. Unsupported U/V fields were 0 and are not advertised controller axes |
+| Original bug diagnosis | Continuous polling on 0.1.0 showed independent trigger axes at minimum 0 while untouched. Version 0.2.0 replaces these axes with digital buttons and centers every advertised axis |
+| Bluetooth failure diagnosis | A tablet-side remembered host had no matching authenticated tablet entry on Windows: asymmetric stale pairing. Registration alone did not establish connection |
+| Automated checks | Formatter and analyzer clean; five encoder/descriptor/multitouch tests passed; debug APK built |
+| Production signing | Dedicated release key; APK signature verified; installed and tested; app data preserved during the explicit one-time debug-to-production migration and app root permission renewed |
+| Bluetooth retest | Callback-confirmed HID ready and discoverability; ordinary pairing could not complete while the Windows session was locked. Live Windows Bluetooth inputs and reconnect remain unverified |
+| Steam / affected game | Actual affected-title gameplay remains unverified; old mappings must be recreated for the new descriptor |
+
+Tested production APK SHA-256: `95edf4fd2418cdf10845954fe0c11a344a1d62379cc9e3f07dead42eaef9ec53`.
+
+The old digital touchscreen triggers already had no pressure sensing; version 0.2.0 exposes their true button behavior. Generic HID still does not provide native XInput or rumble. A fresh Bluetooth pairing is required after changing the report descriptor. Existing Android Bluetooth device names may come from another HID app and are separate from this app's SDP gamepad name.
+
+## Historical 0.1.0 preview
 
 Validation date: 2026-10-23. This records observed results for one compatible rooted tablet and Windows host; it is not a promise of compatibility with every Android firmware or game.
 

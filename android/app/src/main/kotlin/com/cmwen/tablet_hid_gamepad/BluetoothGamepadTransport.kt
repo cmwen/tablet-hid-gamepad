@@ -204,10 +204,17 @@ class BluetoothGamepadTransport(
         }
         val current = generation
         val proxy = hid ?: return@onMain
+        _status = "Connecting to ${safeName(device)}"
+        changed()
         submitWorker {
             val ok = safely { proxy.connect(device) } ?: false
-            if (!ok) handler.post { if (current == generation) fail("Bluetooth rejected the gamepad connection request") }
+            if (!ok) handler.post { if (current == generation) fail("Bluetooth rejected the gamepad connection request; remove pairing on both devices, then pair again while HID is ready") }
         }
+        handler.postDelayed({
+            if (current == generation && active && host == null) {
+                fail("Bluetooth host did not connect. Remove pairing on both devices, start HID, then pair again from Windows while this app stays open")
+            }
+        }, 15000)
     }
 
     fun disconnect() = onMain {
@@ -250,7 +257,7 @@ class BluetoothGamepadTransport(
             "Tablet HID Gamepad",
             "Standard HID gamepad",
             "Min",
-            GAMEPAD_SUBCLASS,
+            BluetoothHidDevice.SUBCLASS2_GAMEPAD,
             GamepadProtocol.activeDescriptor,
         )
         registrationPending = true
@@ -328,8 +335,13 @@ class BluetoothGamepadTransport(
                 proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_INVALID_RPT_ID)
                 return
             }
-            if (host?.address != device.address) {
-                proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_INVALID_RPT_ID)
+            // Hosts may request the initial input state on the control channel
+            // before Android delivers STATE_CONNECTED. A bonded initializing
+            // host must be able to read neutral without becoming the active peer.
+            val currentHost = host
+            if (!active || (currentHost != null && currentHost.address != device.address) ||
+                device.bondState != BluetoothDevice.BOND_BONDED) {
+                proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_NOT_READY)
                 return
             }
             val report = synchronized(this@BluetoothGamepadTransport) { lastReport.copyOf() }
@@ -455,8 +467,4 @@ class BluetoothGamepadTransport(
         if (Looper.myLooper() == handler.looper) action() else handler.post(action)
     }
 
-    companion object {
-        // HID Device API uses the second-level subclass byte from the HID SDP record.
-        private const val GAMEPAD_SUBCLASS: Byte = 0x02
-    }
 }

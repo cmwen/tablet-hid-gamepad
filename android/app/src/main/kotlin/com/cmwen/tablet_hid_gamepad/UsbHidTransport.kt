@@ -106,8 +106,8 @@ class UsbHidTransport(
                 if (line.length > 8192) error("Oversized USB helper response")
                 val event = JSONObject(line)
                 when (event.optString("event")) {
-                    "ready" -> { becameReady = true; ui(token) { busy = false; active = true; status = "USB HID + ADB enabled"; listener.onRegistered(true); listener.onChanged() } }
-                    "connection" -> ui(token) { connected = event.optBoolean("connected"); listener.onConnection(connected); listener.onChanged() }
+                    "ready" -> { becameReady = true; ui(token) { busy = false; active = true; status = "USB HID + ADB enabled"; listener.onRegistered(true); if (connected) send(GamepadProtocol.allUp()); listener.onChanged() } }
+                    "connection" -> ui(token) { connected = event.optBoolean("connected"); if (connected) send(GamepadProtocol.allUp()); listener.onConnection(connected); listener.onChanged() }
                     "report" -> {
                         val data = Base64.decode(event.getString("data"), Base64.DEFAULT)
                         if (data.size in 2..GamepadProtocol.BODY_SIZE) ui(token) { listener.onReport(data) }

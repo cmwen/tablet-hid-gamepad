@@ -143,7 +143,7 @@ class _ControllerScreenState extends State<ControllerScreen>
                     style: TextStyle(color: mint),
                   ),
                   const Text(
-                    'Start HID, make the tablet visible, then pair from Windows Bluetooth settings. Return here and select a paired computer if needed.',
+                    'Windows shows your tablet’s current Android Bluetooth name. Start Bluetooth before pairing. Wait for HID ready, make the tablet visible, then pair from Windows. If already paired without a gamepad, remove the pairing on both devices and pair again while HID is ready. Select the paired computer below to connect.',
                   ),
                   Wrap(
                     spacing: 12,

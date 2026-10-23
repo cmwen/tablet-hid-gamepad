@@ -128,7 +128,7 @@ jobs:
         RELEASE_TYPE: ${{ inputs.release_type }}
       run: |
         set -euo pipefail
-        APP_NAME=min-android-template
+        APP_NAME=tablet-hid-gamepad
         mkdir -p build/artifacts
         cp build/app/outputs/flutter-apk/app-release.apk \
            "build/artifacts/${APP_NAME}-${VERSION}-${RELEASE_TYPE}.apk"

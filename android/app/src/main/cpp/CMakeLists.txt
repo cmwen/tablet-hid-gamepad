@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(gamepad_usb_hid LANGUAGES C)
+add_library(gamepad_usb_hid SHARED usb_functionfs_hid.c)
+target_compile_features(gamepad_usb_hid PRIVATE c_std_11)
+target_compile_options(gamepad_usb_hid PRIVATE -Wall -Wextra -Werror)

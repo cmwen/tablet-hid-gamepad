@@ -41,7 +41,7 @@ tasks.configureEach {
 
 android {
     // TODO: Change namespace to match your package name (e.g., "com.yourcompany.yourapp")
-    namespace = "com.cmwen.min_flutter_template"
+    namespace = "com.cmwen.tablet_hid_gamepad"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -57,14 +57,16 @@ android {
     defaultConfig {
         // TODO: Change applicationId to match your package name (e.g., "com.yourcompany.yourapp")
         // IMPORTANT: This MUST match the package in MainActivity.kt and namespace above
-        applicationId = "com.cmwen.min_flutter_template"
+        applicationId = "com.cmwen.tablet_hid_gamepad"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 28
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
+    externalNativeBuild { cmake { path = file("src/main/cpp/CMakeLists.txt"); version = "3.22.1" } }
 
     // Build optimization settings
     buildFeatures {
@@ -103,6 +105,7 @@ android {
     }
 
     packaging {
+        jniLibs { useLegacyPackaging = true }
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

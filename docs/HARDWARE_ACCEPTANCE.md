@@ -1,6 +1,6 @@
 # Hardware acceptance — 0.2.0
 
-Validation date: 2026-10-23. The production-signed 0.2.0 APK was installed and tested on the same rooted Lenovo Android 10 tablet and Windows host as the earlier preview. Hardware and game compatibility remain specific to the tested setup.
+USB validation: 2026-10-23. Bluetooth follow-up: 2026-10-24 (Australia/Sydney). The production-signed 0.2.0 APK was installed and tested on the same rooted Lenovo Android 10 tablet and Windows host as the earlier preview. Hardware and game compatibility remain specific to the tested setup.
 
 | Check | Observed 0.2.0 result |
 | --- | --- |
@@ -13,8 +13,10 @@ Validation date: 2026-10-23. The production-signed 0.2.0 APK was installed and t
 | Bluetooth failure diagnosis | A tablet-side remembered host had no matching authenticated tablet entry on Windows: asymmetric stale pairing. Registration alone did not establish connection |
 | Automated checks | Formatter and analyzer clean; five encoder/descriptor/multitouch tests passed; debug APK built |
 | Production signing | Dedicated release key; APK signature verified; installed and tested; app data preserved during the explicit one-time debug-to-production migration and app root permission renewed |
-| Bluetooth retest | Callback-confirmed HID ready and discoverability; ordinary pairing could not complete while the Windows session was locked. Live Windows Bluetooth inputs and reconnect remain unverified |
-| Steam / affected game | Actual affected-title gameplay remains unverified; old mappings must be recreated for the new descriptor |
+| Bluetooth fresh pairing | With the Windows session unlocked, normal fresh pairing completed after matching numeric codes were confirmed on both devices. Windows enumerated Generic Desktop / Gamepad (usage page 1, usage 5), 12-byte reports, 16 button bits, four unsigned 16-bit axes and a hat; the app reported a connected host |
+| Live Windows Bluetooth input | 560 host reports: A/B masks 1/2, LT/RT masks 2048/4096, D-pad up/right/neutral 0/2/8 and all four stick axes changed. Final report: buttons 0, hat 8, all axes 32768. USB remained ADB-only throughout, establishing that gamepad reports came over Bluetooth |
+| Bluetooth reconnect | Stopped and restarted Bluetooth, selected the already-paired Windows host, then received two actual Windows A-button press/release reports. Final report was neutral (buttons 0, hat 8, all axes 32768) |
+| Steam / Ori (1057090) | Reached the “Press any key” title prompt. A valid A-button report over Bluetooth and USB did not advance it. Gameplay acceptance not passed; an explicit per-game Steam Input override and restart alone did not resolve it. Old mappings must be recreated for the new descriptor |
 
 Tested production APK SHA-256: `95edf4fd2418cdf10845954fe0c11a344a1d62379cc9e3f07dead42eaef9ec53`.
 
